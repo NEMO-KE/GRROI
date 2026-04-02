@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="GRROI">
+  <link rel="apple-touch-icon" href="logo.png">
+  <link rel="manifest" href="manifest.json">
+  <title>伟大航路邮轮 ROI 分析系统</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.min.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Bottom Tab Bar (mobile) -->
+    <nav class="tab-bar">
+      <a class="tab-item active" data-tab="entry">
+        <i class="ri-edit-2-line"></i>
+        <span>录入</span>
+      </a>
+      <a class="tab-item" data-tab="overview">
+        <i class="ri-table-line"></i>
+        <span>总览</span>
+      </a>
+      <a class="tab-item" data-tab="trends">
+        <i class="ri-line-chart-line"></i>
+        <span>趋势</span>
+      </a>
+      <a class="tab-item" data-tab="compare">
+        <i class="ri-bar-chart-horizontal-line"></i>
+        <span>对比</span>
+      </a>
+      <a class="tab-item" data-tab="channels">
+        <i class="ri-settings-3-line"></i>
+        <span>渠道</span>
+      </a>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main">
+      <!-- ───── Tab: 数据录入 ───── -->
+      <section class="tab-panel active" id="tab-entry">
+        <div class="page-header">
+          <div class="header-brand">
+            <img src="logo.jpg" alt="logo" class="header-logo">
+            <div>
+              <h1>伟大航路邮轮</h1>
+              <p class="page-desc">ROI 分析系统</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-bar">
+          <div class="filter-group">
+            <label>月份</label>
+            <input type="month" id="entry-month" class="form-input">
+          </div>
+          <div class="filter-group">
+            <label>渠道</label>
+            <select id="entry-channel" class="form-input"></select>
+          </div>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-icon" style="background:rgba(255,36,66,0.1);color:#FF2442;">
+              <i class="ri-funds-line"></i>
+            </div>
+            <div class="kpi-info">
+              <span class="kpi-label">当月 ROI</span>
+              <span class="kpi-value" id="kpi-roi">--</span>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon" style="background:rgba(16,185,129,0.1);color:#10b981;">
+              <i class="ri-money-cny-circle-line"></i>
+            </div>
+            <div class="kpi-info">
+              <span class="kpi-label">净利润</span>
+              <span class="kpi-value" id="kpi-net-profit">--</span>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon" style="background:rgba(99,102,241,0.1);color:#6366f1;">
+              <i class="ri-user-add-line"></i>
+            </div>
+            <div class="kpi-info">
+              <span class="kpi-label">获客成本</span>
+              <span class="kpi-value" id="kpi-cac">--</span>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon" style="background:rgba(245,158,11,0.1);color:#f59e0b;">
+              <i class="ri-percent-line"></i>
+            </div>
+            <div class="kpi-info">
+              <span class="kpi-label">毛利率</span>
+              <span class="kpi-value" id="kpi-margin">--</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h3>运营数据</h3></div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>人工成本 (元)</label>
+              <input type="number" id="field-laborCost" class="form-input" placeholder="0.00" min="0" step="0.01" inputmode="decimal">
+            </div>
+            <div class="form-group">
+              <label>办公成本 (元)</label>
+              <input type="number" id="field-officeCost" class="form-input" placeholder="0.00" min="0" step="0.01" inputmode="decimal">
+            </div>
+            <div class="form-group">
+              <label>广告费 (元)</label>
+              <input type="number" id="field-adCost" class="form-input" placeholder="0.00" min="0" step="0.01" inputmode="decimal">
+            </div>
+            <div class="form-group">
+              <label>其他成本 (元)</label>
+              <input type="number" id="field-otherCost" class="form-input" placeholder="0.00" min="0" step="0.01" inputmode="decimal">
+            </div>
+            <div class="form-group">
+              <label>企微新增人数</label>
+              <input type="number" id="field-newCustomers" class="form-input" placeholder="0" min="0" step="1" inputmode="numeric">
+            </div>
+            <div class="form-group">
+              <label>订单金额 (元)</label>
+              <input type="number" id="field-orderAmount" class="form-input" placeholder="0.00" min="0" step="0.01" inputmode="decimal">
+            </div>
+            <div class="form-group">
+              <label>毛利润 (元)</label>
+              <input type="number" id="field-grossProfit" class="form-input" placeholder="0.00" min="0" step="0.01" inputmode="decimal">
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-primary" id="btn-save"><i class="ri-save-line"></i> 保存数据</button>
+            <button class="btn btn-outline" id="btn-clear-form"><i class="ri-refresh-line"></i> 清空</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ───── Tab: 数据总览 ───── -->
+      <section class="tab-panel" id="tab-overview">
+        <div class="page-header">
+          <h1>数据总览</h1>
+          <p class="page-desc">历史运营数据</p>
+        </div>
+        <div class="filter-bar">
+          <div class="filter-group">
+            <label>筛选渠道</label>
+            <select id="overview-channel-filter" class="form-input">
+              <option value="all">全部渠道</option>
+            </select>
+          </div>
+          <button class="btn btn-primary btn-sm" id="btn-export"><i class="ri-download-line"></i> 导出 CSV</button>
+        </div>
+        <div class="card table-card">
+          <div class="table-wrapper">
+            <table class="data-table" id="overview-table">
+              <thead>
+                <tr>
+                  <th>月份</th>
+                  <th>渠道</th>
+                  <th>总成本</th>
+                  <th>订单额</th>
+                  <th>毛利润</th>
+                  <th>净利润</th>
+                  <th>ROI</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="overview-tbody"></tbody>
+            </table>
+          </div>
+          <div class="empty-state" id="overview-empty" style="display:none;">
+            <i class="ri-inbox-line"></i>
+            <p>暂无数据，请先录入</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ───── Tab: 趋势分析 ───── -->
+      <section class="tab-panel" id="tab-trends">
+        <div class="page-header">
+          <h1>趋势分析</h1>
+          <p class="page-desc">月度趋势变化</p>
+        </div>
+        <div class="filter-bar">
+          <div class="filter-group">
+            <label>选择渠道</label>
+            <select id="trends-channel" class="form-input">
+              <option value="all">全部渠道(汇总)</option>
+            </select>
+          </div>
+        </div>
+        <div class="charts-grid">
+          <div class="card chart-card"><h3>投入 vs 毛利润</h3><canvas id="chart-cost-profit"></canvas></div>
+          <div class="card chart-card"><h3>净利润走势</h3><canvas id="chart-net-profit"></canvas></div>
+          <div class="card chart-card"><h3>累计净利润</h3><canvas id="chart-cumulative"></canvas></div>
+          <div class="card chart-card"><h3>企微新增人数</h3><canvas id="chart-customers"></canvas></div>
+        </div>
+      </section>
+
+      <!-- ───── Tab: 渠道对比 ───── -->
+      <section class="tab-panel" id="tab-compare">
+        <div class="page-header">
+          <h1>渠道对比</h1>
+          <p class="page-desc">各渠道同月横向对比</p>
+        </div>
+        <div class="filter-bar">
+          <div class="filter-group">
+            <label>选择月份</label>
+            <select id="compare-month" class="form-input"></select>
+          </div>
+        </div>
+        <div class="charts-grid">
+          <div class="card chart-card"><h3>ROI 对比</h3><canvas id="chart-compare-roi"></canvas></div>
+          <div class="card chart-card"><h3>获客成本对比</h3><canvas id="chart-compare-cac"></canvas></div>
+          <div class="card chart-card"><h3>净利润对比</h3><canvas id="chart-compare-profit"></canvas></div>
+          <div class="card chart-card"><h3>投入构成对比</h3><canvas id="chart-compare-cost"></canvas></div>
+        </div>
+      </section>
+
+      <!-- ───── Tab: 渠道管理 ───── -->
+      <section class="tab-panel" id="tab-channels">
+        <div class="page-header">
+          <h1>渠道管理</h1>
+          <p class="page-desc">添加或删除运营渠道</p>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>添加新渠道</h3></div>
+          <div class="add-channel-form">
+            <input type="text" id="new-channel-name" class="form-input" placeholder="输入渠道名称">
+            <button class="btn btn-primary" id="btn-add-channel"><i class="ri-add-line"></i> 添加</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>已有渠道</h3></div>
+          <div class="channel-list" id="channel-list"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
