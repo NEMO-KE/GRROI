@@ -38,23 +38,52 @@ function doLogin() {
   }
 }
 
-// ─── Data Storage (localStorage) ────────────────────────
-const STORAGE_KEY = 'grroi-data';
+// ─── Supabase Cloud Storage ─────────────────────────────
+const SUPABASE_URL = 'https://dooddrtgbbmioavjbtfi.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRvb2RkcnRnYmJtaW9hdmpidGZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNDAwNDUsImV4cCI6MjA5MDcxNjA0NX0.W__ZWwVLgZr-2Cd9Gd7Z8y6sznDryp_Cn4zbMC5_LlY';
 
-function loadData() {
+const supaHeaders = {
+  'apikey': SUPABASE_KEY,
+  'Authorization': 'Bearer ' + SUPABASE_KEY,
+  'Content-Type': 'application/json',
+  'Prefer': 'return=representation'
+};
+
+const DEFAULT_DATA = { channels: ['小红书', '抖音', '微博', '快手', 'B站'], records: {} };
+
+async function loadData() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/app_data?id=eq.1&select=data`, { headers: supaHeaders });
+    const rows = await res.json();
+    if (rows.length > 0 && rows[0].data) return rows[0].data;
+  } catch (e) {
+    console.error('Cloud load failed, using local fallback:', e);
+  }
+  // Fallback to localStorage
+  try {
+    const raw = localStorage.getItem('grroi-data');
     if (raw) return JSON.parse(raw);
   } catch (e) {}
-  return { channels: ['小红书', '抖音', '微博', '快手', 'B站'], records: {} };
+  return DEFAULT_DATA;
 }
 
-function saveData(data) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+async function saveData(data) {
+  // Always save locally as backup
+  localStorage.setItem('grroi-data', JSON.stringify(data));
+  // Save to cloud
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/app_data?id=eq.1`, {
+      method: 'PATCH',
+      headers: supaHeaders,
+      body: JSON.stringify({ data, updated_at: new Date().toISOString() })
+    });
+  } catch (e) {
+    console.error('Cloud save failed:', e);
+  }
 }
 
 // ─── State ──────────────────────────────────────────────
-let appData = loadData();
+let appData = DEFAULT_DATA;
 let charts = {};
 
 // ─── Utility ────────────────────────────────────────────
@@ -88,7 +117,8 @@ const COLORS = ['#FF2442','#6366f1','#10b981','#f59e0b','#8b5cf6','#ec4899','#14
 const FIELDS = ['laborCost','officeCost','adCost','otherCost','newCustomers','orderAmount','grossProfit'];
 
 // ─── Init ───────────────────────────────────────────────
-function initApp() {
+async function initApp() {
+  appData = await loadData();
   initMonthPicker();
   populateChannelSelectors();
   setupNavigation();
@@ -167,13 +197,13 @@ function updateKPIPreview() {
   document.getElementById('kpi-margin').textContent = data.orderAmount > 0 ? m.margin.toFixed(1) + '%' : '--';
 }
 
-function saveRecord() {
+async function saveRecord() {
   const month = document.getElementById('entry-month').value;
   const channel = document.getElementById('entry-channel').value;
   if (!month || !channel) { showToast('请先选择月份和渠道', 'error'); return; }
   if (!appData.records[month]) appData.records[month] = {};
   appData.records[month][channel] = getFormData();
-  saveData(appData);
+  await saveData(appData);
   showToast('数据已保存', 'success');
 }
 
@@ -224,13 +254,13 @@ function renderOverviewTable() {
   }).join('');
 }
 
-window.deleteRecord = function(month, channel) {
+window.deleteRecord = async function(month, channel) {
   if (!confirm(`删除 ${month} ${channel} 的数据？`)) return;
   if (appData.records[month]) {
     delete appData.records[month][channel];
     if (Object.keys(appData.records[month]).length === 0) delete appData.records[month];
   }
-  saveData(appData);
+  await saveData(appData);
   renderOverviewTable();
   showToast('已删除', 'success');
 };
@@ -406,27 +436,27 @@ function renderChannelList() {
   }).join('');
 }
 
-function addChannel() {
+async function addChannel() {
   const input = document.getElementById('new-channel-name');
   const name = input.value.trim();
   if (!name) { showToast('请输入渠道名称', 'error'); return; }
   if (appData.channels.includes(name)) { showToast('渠道已存在', 'error'); return; }
   appData.channels.push(name);
-  saveData(appData);
+  await saveData(appData);
   input.value = '';
   populateChannelSelectors();
   renderChannelList();
   showToast(`已添加「${name}」`, 'success');
 }
 
-window.removeChannel = function(name) {
+window.removeChannel = async function(name) {
   if (!confirm(`删除渠道「${name}」及其所有数据？`)) return;
   appData.channels = appData.channels.filter(c => c !== name);
   for (const m of Object.keys(appData.records)) {
     delete appData.records[m][name];
     if (Object.keys(appData.records[m]).length === 0) delete appData.records[m];
   }
-  saveData(appData);
+  await saveData(appData);
   populateChannelSelectors();
   renderChannelList();
   showToast(`已删除「${name}」`, 'success');
