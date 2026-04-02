@@ -392,3 +392,4 @@ window.removeChannel = function(name) {
   renderChannelList();
   showToast(`已删除「${name}」`, 'success');
 };
+
