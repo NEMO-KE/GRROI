@@ -13,7 +13,21 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.min.css">
 </head>
 <body>
-  <div class="app">
+  <!-- Login Screen -->
+  <div class="login-screen" id="login-screen">
+    <div class="login-card">
+      <img src="logo.jpg" alt="logo" class="login-logo">
+      <h1 class="login-title">GRROI 系统</h1>
+      <p class="login-desc">多渠道运营 ROI 分析</p>
+      <div class="login-form">
+        <input type="password" id="login-password" class="form-input login-input" placeholder="请输入密码" autocomplete="off">
+        <button class="btn btn-primary login-btn" id="btn-login">登 录</button>
+      </div>
+      <p class="login-error" id="login-error"></p>
+    </div>
+  </div>
+
+  <div class="app" id="app" style="display:none;">
     <!-- Bottom Tab Bar (mobile) -->
     <nav class="tab-bar">
       <a class="tab-item active" data-tab="entry">

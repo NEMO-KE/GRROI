@@ -3,6 +3,41 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').catch(() => {});
 }
 
+// ─── Login ──────────────────────────────────────────────
+const APP_PASS = 'gr369888';
+
+function checkLogin() {
+  if (sessionStorage.getItem('grroi-auth') === '1') {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    return true;
+  }
+  return false;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (checkLogin()) return;
+
+  document.getElementById('btn-login').addEventListener('click', doLogin);
+  document.getElementById('login-password').addEventListener('keydown', e => {
+    if (e.key === 'Enter') doLogin();
+  });
+});
+
+function doLogin() {
+  const pwd = document.getElementById('login-password').value;
+  if (pwd === APP_PASS) {
+    sessionStorage.setItem('grroi-auth', '1');
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    document.getElementById('login-error').textContent = '';
+    initApp();
+  } else {
+    document.getElementById('login-error').textContent = '密码错误，请重试';
+    document.getElementById('login-password').value = '';
+  }
+}
+
 // ─── Data Storage (localStorage) ────────────────────────
 const STORAGE_KEY = 'grroi-data';
 
@@ -53,7 +88,7 @@ const COLORS = ['#FF2442','#6366f1','#10b981','#f59e0b','#8b5cf6','#ec4899','#14
 const FIELDS = ['laborCost','officeCost','adCost','otherCost','newCustomers','orderAmount','grossProfit'];
 
 // ─── Init ───────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
+function initApp() {
   initMonthPicker();
   populateChannelSelectors();
   setupNavigation();
@@ -61,6 +96,10 @@ document.addEventListener('DOMContentLoaded', () => {
   setupOverview();
   setupChannelManagement();
   loadRecord();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (checkLogin()) initApp();
 });
 
 // ─── Navigation ─────────────────────────────────────────

@@ -464,6 +464,74 @@ html, body {
 .toast.success { background: var(--success); }
 .toast.error { background: var(--danger); }
 
+/* ─── Login Screen ────────────────────────────────────── */
+.login-screen {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg, #1a1a2e 0%, #2d1b3d 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.login-card {
+  background: var(--bg-card);
+  border-radius: 20px;
+  padding: 40px 32px;
+  width: 320px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.login-logo {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  border-radius: 16px;
+  margin-bottom: 16px;
+}
+
+.login-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.login-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 28px;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.login-input {
+  text-align: center;
+  font-size: 16px;
+  height: 44px;
+  border-radius: 10px;
+}
+
+.login-btn {
+  height: 44px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.login-error {
+  color: var(--danger);
+  font-size: 13px;
+  margin-top: 12px;
+  min-height: 20px;
+}
+
 /* ─── Scrollbar ───────────────────────────────────────── */
 ::-webkit-scrollbar { width: 0; height: 0; }
 
